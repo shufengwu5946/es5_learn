@@ -1,3 +1,5 @@
+'use strict';
+
 console.log(a);
 var a = 1;
 
@@ -169,7 +171,7 @@ const rawObject = {
 const deepClone = (rawObject) => {
 
     let obj = {};
-    for (key of Object.keys(rawObject)) {
+    for (let key of Object.keys(rawObject)) {
 
         if (typeof rawObject[key] === 'object') {
             if (rawObject[key] instanceof Array) {
@@ -325,6 +327,156 @@ o4[1](); // 5
 o4[2](); // 5
 o4[3](); // 5
 o4[4](); // 5
+
+
+class Book {
+    constructor() {
+        this._title = 'book1';
+    }
+    get title() {
+        return this._title;
+    }
+    set title(value) {
+        value == 'book2' ?
+            this._title = value : ''
+    }
+}
+var book = new Book();
+book.title = 'book3';
+console.log(book.title);  // 'book1'
+book.title = 'book2';
+console.log(book.title)  // 'book2' 
+book._title = "book888";
+console.log(book._title);
+console.log(book.title);
+
+
+function Person(name) {
+    var _age;
+    function setAge(n) {
+        _age = n;
+    }
+    function getAge() {
+        return _age;
+    }
+
+
+    return {
+        name: name,
+        getAge: getAge,
+        setAge: setAge
+    };
+}
+
+var p1 = Person('张三');
+p1.setAge(25);
+console.log(p1.getAge()) // 25
+
+
+var Counter = (function () {
+    var privateCounter = 0;
+    function changeBy(val) {
+        privateCounter += val;
+    }
+    return {
+        increment: function () {
+            changeBy(1);
+        },
+        decrement: function () {
+            changeBy(-1);
+        },
+        value: function () {
+            return privateCounter;
+        }
+    }
+})();
+
+console.log(Counter.value()); /* logs 0 */
+Counter.increment();
+Counter.increment();
+console.log(Counter.value()); /* logs 2 */
+Counter.decrement();
+console.log(Counter.value()); /* logs 1 */
+
+console.log("-------------------------module skeleton--------------------------");
+
+var Counter2 = {
+    name(){
+        console.log('name');
+        
+    }
+}
+
+Counter2 = (function Counter2(expo) {
+
+    let privateCounter = 0;
+    function changeBy(val) {
+        privateCounter += val;
+    }
+    expo.increment = function () {
+        changeBy(1);
+    };
+    expo.decrement = function () {
+        changeBy(-1);
+    };
+    expo.value = function () {
+        return privateCounter;
+    };
+    return expo;
+}(Counter2 || {}));
+
+console.log(Counter2.value()); /* logs 0 */
+Counter2.increment();
+Counter2.increment();
+console.log(Counter2.value()); /* logs 2 */
+Counter2.decrement();
+console.log(Counter2.value()); /* logs 1 */
+console.log(Counter2);
+
+
+
+// 函数防抖，频繁操作中不处理，直到操作完成之后（再过 delay 的时间）才一次性处理
+function debounce(fn, delay) {
+    delay = delay || 200;
+
+    var timer = null;
+
+    return function () {
+        var arg = arguments;
+
+        // 每次操作时，清除上次的定时器
+        clearTimeout(timer);
+        timer = null;
+
+        // 定义新的定时器，一段时间后进行操作
+        timer = setTimeout(function () {
+            fn.apply(this, arg);
+        }, delay);
+    }
+};
+
+var count = 0;
+
+window.onscroll = debounce(function (e) {
+    console.log(e.type, ++count); // scroll
+}, 500);
+
+
+
+var arr = [1, 2, 3, 4];
+function processArr() {
+    function multipleBy10(val) {
+        i = 10;
+        return val * i;
+    }
+    for (var i = 0; i < arr.length; i++) {
+        arr[i] = multipleBy10(arr[i]);
+    }
+    return arr;
+}
+console.log(processArr()); //-> [10, 2, 3, 4]
+
+
 
 
 
