@@ -477,7 +477,20 @@ function processArr() {
 console.log(processArr()); //-> [10, 2, 3, 4]
 
 
+function func1(){
+    var nnn = "test";
+    function func2(){
+        function func3(){
+            function func4(){
+                console.log(nnn);
+            }
+            return func4;
+        }
+        return func3;
+    }
+    return func2;
+}
 
-
+func1()()()();
 
 
