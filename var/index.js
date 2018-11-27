@@ -401,9 +401,9 @@ console.log(Counter.value()); /* logs 1 */
 console.log("-------------------------module skeleton--------------------------");
 
 var Counter2 = {
-    name(){
+    name() {
         console.log('name');
-        
+
     }
 }
 
@@ -461,6 +461,7 @@ window.onscroll = debounce(function (e) {
     console.log(e.type, ++count); // scroll
 }, 500);
 
+console.log("---------------------Ambiguous loop-counter problem-------------------------");
 
 
 var arr = [1, 2, 3, 4];
@@ -469,28 +470,37 @@ function processArr() {
         i = 10;
         return val * i;
     }
-    for (var i = 0; i < arr.length; i++) {
-        arr[i] = multipleBy10(arr[i]);
-    }
+    // for (var i = 0; i < arr.length; i++) {
+    //     arr[i] = multipleBy10(arr[i]);
+    // }
+    // arr.forEach(function(element,index){
+    //     arr[index] = multipleBy10(element);
+    // });
+    (function () {
+        for (var i = 0; i < arr.length; i++) {
+            arr[i] = multipleBy10(arr[i]);
+        }
+    })();
+
     return arr;
 }
 console.log(processArr()); //-> [10, 2, 3, 4]
 
 
-function func1(){
-    var nnn = "test";
-    function func2(){
-        function func3(){
-            function func4(){
-                console.log(nnn);
-            }
-            return func4;
-        }
-        return func3;
-    }
-    return func2;
-}
+// function func1(){
+//     var nnn = "test";
+//     function func2(){
+//         function func3(){
+//             function func4(){
+//                 console.log(nnn);
+//             }
+//             return func4;
+//         }
+//         return func3;
+//     }
+//     return func2;
+// }
 
-func1()()()();
+// func1()()()();
 
 
