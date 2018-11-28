@@ -16,9 +16,17 @@
 // }
 
 // console.log(n)
-// Uncaught ReferenceError: n is not defined(
+//Uncaught ReferenceError: n is not defined(
 
 
+// function f1() {
+//     var n = 999;
+//     function f2() {
+//         console.log(n); // 999
+//     }
+//     f2();
+// }
+// f1();
 
 
 // 作用域-->闭包
@@ -58,7 +66,6 @@
 
 //     //私有属性，不能通过对象直接访问
 //     var privateCounter = 0;
-
 //     //私有方法，只能被同一个类中的其它方法所调用。
 //     function changeBy(val) {
 //         privateCounter += val;
@@ -78,20 +85,26 @@
 // };
 
 // var Counter1 = makeCounter();
-// var Counter2 = makeCounter();
 // console.log(Counter1.value()); /* logs 0 */
 // Counter1.increment();
 // Counter1.increment();
 // console.log(Counter1.value()); /* logs 2 */
 // Counter1.decrement();
 // console.log(Counter1.value()); /* logs 1 */
-// console.log(Counter2.value()); /* logs 0 */
-// console.log(Counter1.privateCounter); // undefined
-// Counter1.changeBy(1); // Uncaught TypeError: Counter1.changeBy is not a function
+// console.log(Counter1.privateCounter); 
+// undefined
+// Counter1.changeBy(1); 
+// Uncaught TypeError: Counter1.changeBy is not a function
 
 
 
 // 柯里化
+
+// var adder = function(num,y){
+//     return num + y;
+// }
+// console.log(adder(1,99));
+// console.log(adder(-1,101));
 
 // var adder = function (num) {
 //     return function (y) {
@@ -99,7 +112,7 @@
 //     }
 // }
 // var inc = adder(1);
-// var dec = adder(-1)
+// var dec = adder(-1);
 
 // console.log(inc(99));//100
 // console.log(dec(101));//100
@@ -117,6 +130,26 @@
 // var funcRef = callLater(elStyle, "display", "none");
 // hideMenu = setTimeout(funcRef, 500);
 
+
+// 模拟块级作用域
+
+// function outputNumbers(count){
+//     for(var i = 0; i < count; i++){
+//         console.log(i); // 0, 1, ... count - 1
+//     }
+//     console.log(i); // count
+// }
+
+
+// function outputNumbers(count){
+//     (function(){
+//         //块级作用域
+//         for(var i = 0; i < count; i++){
+//             console.log(i); // 0, 1, ... count - 1
+//         }
+//     })();
+//     console.log(i); // error
+// }
 
 
 // 封装相关功能集
@@ -240,6 +273,48 @@
 // }, 500);
 
 
+// 分时函数
+/**
+ * 分时函数
+ * @param {*} argsAry 列表
+ * @param {*} fn 渲染列表项的函数
+ * @param {*} count 每次加载条数
+ */
+// var timeChunk = function(argsAry, fn, count) {
+//     var interval;
+//     var exec = function() {
+//         var l = argsAry.length;
+//         for (var i = 0; i < Math.min(count || 1, l); i++) {
+//             var arg = argsAry.shift();
+//             fn(arg);
+//         }
+//     }
+
+//     return function() {
+//         interval = setInterval(function() {
+//             var flag = exec();
+//             if (argsAry.length === 0) {
+//                 clearInterval(interval);
+//                 interval = null;
+//             }
+//         }, 1000);
+//     }
+// };
+
+// var a = [],func;
+
+// // 模拟QQ好友列表
+// for (var i = 0; i < 36; i++) {
+//     a.push(i);
+// }
+
+// func = timeChunk(a, function(i) {
+//     //模拟渲染列表项
+//     console.log(i);
+// }, 10);
+// func();
+
+
 
 //单例
 // var getSingle = function (func) {
@@ -280,80 +355,122 @@
 
 
 // AOP方式
-// Function.prototype.after = function(afterfn) {
+// Function.prototype.after = function (afterfn) {
 //     var __self = this;
-//     return function() {
+//     return function () {
 //         var ret = __self.apply(this, arguments);
 //         afterfn.apply(this, arguments);
 //         return ret;
 //     }
 // }
 
-// var showLogin=function(){
+// var showLogin = function () {
 //     console.log("打开登录浮层");
 // }
 
-// var log=function(){
-//     console.log("上传标签为:"+this.getAttribute('tag'));
+// var log = function () {
+//     console.log("上传标签为:" + this.getAttribute('tag'));
 // }
 
-// showLogin=showLogin.after(log);
+// showLogin = showLogin.after(log);
 
-// document.getElementById('button').onclick=showLogin;
+// document.getElementById('button').onclick = showLogin;
 
+
+
+// function associateObjWithEvent(obj, methodName) {
+
+//     return (function (e) {
+
+//         e = e || window.event;
+
+//         return obj[methodName](e, this);
+//     });
+// }
+
+// function DhtmlObject(elementId) {
+
+//     var el = document.getElementById(elementId);
+
+//     if (el) {
+
+//         el.onclick = associateObjWithEvent(this, "doOnClick");
+//         el.onmouseover = associateObjWithEvent(this, "doMouseOver");
+//         el.onmouseout = associateObjWithEvent(this, "doMouseOut");
+
+//     }
+// }
+// DhtmlObject.prototype.doOnClick = function (event, element) {
+//     if (element.id === 'test') {
+//         console.log('test');
+
+//     } else {
+//         console.log('doOnClick: ' + event + ' ' + element);
+//     }
+
+// }
+// DhtmlObject.prototype.doMouseOver = function (event, element) {
+//     console.log('doMouseOver: ' + event + ' ' + element);
+// }
+// DhtmlObject.prototype.doMouseOut = function (event, element) {
+//     console.log('doMouseOut: ' + event + ' ' + element);
+// }
+// document.addEventListener("DOMContentLoaded", function (event) {
+//     new DhtmlObject('test');
+// })
 
 
 
 
 //在循环中创建闭包
 
-function outer(){
-    var funcs = [];
-    for(var i = 0;i < 5;i++){
-        funcs[i] = function (){
-            console.log(i);
-        }
-    }
-    return funcs;
-}
-var o = outer();
-o[0](); // 5
-o[1](); // 5
-o[2](); // 5
-o[3](); // 5
-o[4](); // 5
+// function outer(){
+//     var funcs = [];
+//     for(var i = 0;i < 5;i++){
+//         funcs[i] = function (){
+//             console.log(i);
+//         }
+//     }
+//     return funcs;
+// }
+// var o = outer();
+// o[0](); // 5
+// o[1](); // 5
+// o[2](); // 5
+// o[3](); // 5
+// o[4](); // 5
 
 
 // 解决方案
 
 // （1）使用更多闭包
 
-function makeFunction(value){
-    return function (){
-        console.log(value);
-    }
-}
+// function makeFunction(value){
+//     return function (){
+//         console.log(value);
+//     }
+// }
 
-function outer(){
-    var funcs = [];
-    for(var i = 0;i < 5;i++){
-        funcs[i] = makeFunction(i);
-    }
-    return funcs;
-}
+// function outer(){
+//     var funcs = [];
+//     for(var i = 0;i < 5;i++){
+//         funcs[i] = makeFunction(i);
+//     }
+//     return funcs;
+// }
 
 
 
 // （2）循环中变量用let声明代替var声明：
 
 
-function outer(){
-    var funcs = [];
-    for(let i = 0;i < 5;i++){
-        funcs[i] = function (){
-            console.log(i);
-        }
-    }
-    return funcs;
-}
+// function outer(){
+//     var funcs = [];
+//     for(let i = 0;i < 5;i++){
+//         funcs[i] = function (){
+//             console.log(i);
+//         }
+//     }
+//     return funcs;
+// }
 
