@@ -120,16 +120,6 @@
 // console.log(adder(2)(100));//102
 
 
-// setTimeOut 传参
-// function callLater(paramA, paramB, paramC) {
-//     return (function () {
-//         paramA[paramB] = paramC;
-//     });
-// }
-
-// var funcRef = callLater(elStyle, "display", "none");
-// hideMenu = setTimeout(funcRef, 500);
-
 
 // 模拟块级作用域
 
@@ -153,68 +143,54 @@
 
 
 // 封装相关功能集
-// var getImgInPositionedDivHtml = (function () {
+var getImgInPositionedDivHtml = (function () {
+    var buffAr = [
+        '<div id="',
+        '',   //index 1, DIV ID attribute
+        '" style="position:absolute;border:',
+        '',   //index 3, div border
+        ';top:',
+        '',   //index 5, DIV top position
+        'px;left:',
+        '',   //index 7, DIV left position
+        'px;width:',
+        '',   //index 9, DIV width
+        'px;height:',
+        '',   //index 11, DIV height
+        'px;overflow:hidden;\"><img src=\"',
+        '',   //index 13, IMG url
+        '\"><\/div>'
+    ];
+    return function (url, border,id, width, height, top, left) {
+        buffAr[1] = id;
+        buffAr[3] = border;
+        buffAr[5] = top;
+        buffAr[7] = left;
+        buffAr[9] = width;
+        buffAr[11] = height;
+        buffAr[13] = url;
+        return buffAr.join('');
+    };
+})();
 
-//     var buffAr = [
-//         '<div id="',
-//         '',   //index 1, DIV ID attribute
-//         '" style="position:absolute;border:',
-//         '',   //index 3, div border
-//         ';top:',
-//         '',   //index 5, DIV top position
-//         'px;left:',
-//         '',   //index 7, DIV left position
-//         'px;width:',
-//         '',   //index 9, DIV width
-//         'px;height:',
-//         '',   //index 11, DIV height
-//         'px;overflow:hidden;\"><img src=\"',
-//         '',   //index 13, IMG URL
-//         '\" width=\"',
-//         '',   //index 15, IMG width
-//         '\" height=\"',
-//         '',   //index 17, IMG height
-//         '\" alt=\"',
-//         '',   //index 19, IMG alt text
-//         '\"><\/div>'
-//     ];
+var div=document.createElement("div");
+div.innerHTML = getImgInPositionedDivHtml('https://www.baidu.com/img/baidu_jgylogo3.gif','1px red solid','baidu',500,300,100,100);
+document.body.appendChild(div);
 
-//     return function (url, border,id, width, height, top, left, altText) {
-
-//         buffAr[1] = id;
-//         buffAr[3] = border;
-//         buffAr[5] = top;
-//         buffAr[7] = left;
-//         buffAr[15] = (buffAr[9] = width);
-//         buffAr[17] = (buffAr[11] = height);
-//         buffAr[13] = url;
-//         buffAr[19] = altText;
-
-//         return buffAr.join('');
-//     };
-// })();
-
-// var div=document.createElement("div");
-// div.innerHTML = getImgInPositionedDivHtml('https://www.baidu.com/img/baidu_jgylogo3.gif','1px black solid','baidu',500,300,100,100,'百度');
-// document.body.appendChild(div);
-
-// var div=document.createElement("div");
-// div.innerHTML = getImgInPositionedDivHtml('https://www.sogou.com/web/index/images/logo_440x140.v.4.png','1px black solid','baidu',400,200,500,100,'搜狗');
-// document.body.appendChild(div);
+var div=document.createElement("div");
+div.innerHTML = getImgInPositionedDivHtml('https://www.sogou.com/web/index/images/logo_440x140.v.4.png','1px green solid','baidu',400,200,500,100);
+document.body.appendChild(div);
 
 // 防抖
 // function debounce(fn, delay) {
 //     delay = delay || 200;
-
 //     var timer = null;
 
 //     return function() {
 //         var arg = arguments;
-
 //         // 每次操作时，清除上次的定时器
 //         clearTimeout(timer);
 //         timer = null;
-
 //         // 定义新的定时器，一段时间后进行操作
 //         timer = setTimeout(function() {
 //             fn.apply(this, arg);
@@ -222,52 +198,33 @@
 //     }
 // };
 
-// var count = 0;
-
 // window.onscroll = debounce(function(e) {
-//     console.log(e.type, ++count); // scroll
+//     console.log("确实停了"); // scroll
 // }, 500);
 
 
 // 节流
 // 函数节流，频繁操作中间隔 delay 的时间才处理一次
 // function throttle(fn, delay) {
-//     delay = delay || 200;
-
-//     var timer = null;
+//     delay = delay || 500;
 //     // 每次滚动初始的标识
 //     var timestamp = 0;
-
 //     return function() {
 //         var arg = arguments;
 //         var now = Date.now();
-
 //         // 设置开始时间
 //         if (timestamp === 0) {
 //             timestamp = now;
 //         }
-
-//         clearTimeout(timer);
-//         timer = null;
-
 //         // 已经到了delay的一段时间，进行处理
 //         if (now - timestamp >= delay) {
 //             fn.apply(this, arg);
 //             timestamp = now;
 //         }
-//         // 添加定时器，确保最后一次的操作也能处理
-//         else {
-//             timer = setTimeout(function() {
-//                 fn.apply(this, arg);
-//                 // 恢复标识
-//                 timestamp = 0;
-//             }, delay);
-//         }
 //     }
 // };
 
 // var count = 0;
-
 // window.onscroll = throttle(function(e) {
 //     console.log(e.type, ++count); // scroll
 // }, 500);
@@ -282,6 +239,7 @@
  */
 // var timeChunk = function(argsAry, fn, count) {
 //     var interval;
+//     //取出count数量的好友列表项并渲染
 //     var exec = function() {
 //         var l = argsAry.length;
 //         for (var i = 0; i < Math.min(count || 1, l); i++) {
@@ -301,41 +259,46 @@
 //     }
 // };
 
-// var a = [],func;
+// var a = [];
 
 // // 模拟QQ好友列表
 // for (var i = 0; i < 36; i++) {
 //     a.push(i);
 // }
 
-// func = timeChunk(a, function(i) {
+// var func = timeChunk(a, function(i) {
 //     //模拟渲染列表项
 //     console.log(i);
 // }, 10);
 // func();
 
-
-
-//单例
-// var getSingle = function (func) {
-//     var ret = null;
-
-//     return function () {
-//         if(!ret){
-//             ret = func.apply(this, Array.prototype.slice.call(arguments));
-//         }
-//         return ret;
+// var timeChunk = function(argsAry, fn, count) {
+//     var interval;
+//     var exec = function() {
+//         ......
+//         // 取出count数量的好友并逐条调用fn渲染
 //     }
-// }
 
-// var getScript = getSingle(function () {
-//     return document.createElement('script');
-// });
+//     return function() {
+//         interval = setInterval(function() {
+//             exec();
+//             if (argsAry.length === 0) {
+//                 clearInterval(interval);
+//                 interval = null;
+//             }
+//         }, 1000);
+//     }
+// };
 
-// var script1 = getScript();
-// var script2 = getScript();
+// // 好友列表数组
+// var a = [......];
+// var func = timeChunk(a, function(i) {
+//     ...
+//     //渲染一个好友
+// }, 10);
+// func();
 
-// console.log(script1 === script2);    // 输出：true 
+
 
 
 
@@ -346,8 +309,8 @@
 // }
 
 // var log = function(tag) {
+//     //假设为上传数据操作
 //     console.log("上传标签为:" + tag);
-//     //(new Image).src="http://xxx.com/report?tag="+tag; //真正的上传代码略
 // }
 
 // document.getElementById('button').onclick = showLogin;
@@ -367,63 +330,62 @@
 // var showLogin = function () {
 //     console.log("打开登录浮层");
 // }
-
 // var log = function () {
 //     console.log("上传标签为:" + this.getAttribute('tag'));
 // }
 
 // showLogin = showLogin.after(log);
-
 // document.getElementById('button').onclick = showLogin;
 
 
 
 // function associateObjWithEvent(obj, methodName) {
-
 //     return (function (e) {
-
 //         e = e || window.event;
-
 //         return obj[methodName](e, this);
 //     });
 // }
 
 // function DhtmlObject(elementId) {
-
 //     var el = document.getElementById(elementId);
-
 //     if (el) {
-
 //         el.onclick = associateObjWithEvent(this, "doOnClick");
 //         el.onmouseover = associateObjWithEvent(this, "doMouseOver");
 //         el.onmouseout = associateObjWithEvent(this, "doMouseOut");
-
 //     }
 // }
+
 // DhtmlObject.prototype.doOnClick = function (event, element) {
-//     if (element.id === 'test') {
-//         console.log('test');
-
-//     } else {
-//         console.log('doOnClick: ' + event + ' ' + element);
-//     }
-
 // }
 // DhtmlObject.prototype.doMouseOver = function (event, element) {
-//     console.log('doMouseOver: ' + event + ' ' + element);
 // }
 // DhtmlObject.prototype.doMouseOut = function (event, element) {
-//     console.log('doMouseOut: ' + event + ' ' + element);
 // }
 // document.addEventListener("DOMContentLoaded", function (event) {
 //     new DhtmlObject('test');
 // })
 
+//单例
+// var getSingle = function (func) {
+//     var ret = null;
+//     return function () {
+//         if(!ret){
+//             ret = func.apply(this, Array.prototype.slice.call(arguments));
+//         }
+//         return ret;
+//     }
+// }
 
+// var getScript = getSingle(function () {
+//     return document.createElement('script');
+// });
+
+// var script1 = getScript();
+// var script2 = getScript();
+// console.log(script1 === script2);    // 输出：true 
 
 
 //在循环中创建闭包
-
 // function outer(){
 //     var funcs = [];
 //     for(var i = 0;i < 5;i++){
@@ -434,17 +396,16 @@
 //     return funcs;
 // }
 // var o = outer();
-// o[0](); // 5
-// o[1](); // 5
-// o[2](); // 5
-// o[3](); // 5
-// o[4](); // 5
+// o[0](); 
+// o[1](); 
+// o[2](); 
+// o[3](); 
+// o[4](); 
 
 
 // 解决方案
 
 // （1）使用更多闭包
-
 // function makeFunction(value){
 //     return function (){
 //         console.log(value);
@@ -462,8 +423,6 @@
 
 
 // （2）循环中变量用let声明代替var声明：
-
-
 // function outer(){
 //     var funcs = [];
 //     for(let i = 0;i < 5;i++){
@@ -473,4 +432,35 @@
 //     }
 //     return funcs;
 // }
+
+
+//this对象
+// var name = "The Window";
+
+// var object = {
+//     name : "My Object",
+//     getNameFunc : function(){
+//         console.log(this.name);
+//         return function(){
+//             return this.name;
+//         };
+//     }
+// };
+
+// alert(object.getNameFunc()());
+
+
+// var name = "The Window";
+
+// var object = {
+//     name : "My Object",
+//     getNameFunc : function(){
+//         var that = this;
+//         return function(){
+//             return that.name;
+//         };
+//     }
+// };
+
+// alert(object.getNameFunc()());
 
